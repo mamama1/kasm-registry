@@ -27,7 +27,22 @@ If a workspace's image is on a **private** registry, first add pull credentials 
 
 | Workspace | Image | Notes |
 |-----------|-------|-------|
-| Ubuntu Noble (Intel Arc Battlemage) | `ghcr.io/mamama1/kasm-ubuntu-noble-desktop-battlemage:1.19.0` | Needs an Intel Arc GPU agent with `/dev/dri/renderD128` passthrough (render gid `993`). Source: [workspaces-images @ battlemage](https://git.void.ne-mail.net/NNET-IT/workspaces-images). |
+| Ubuntu Noble (Intel Arc Battlemage) | `ghcr.io/mamama1/kasm-ubuntu-noble-desktop-battlemage:1.19.0` | Needs an Intel Arc GPU agent with `/dev/dri/renderD128` passthrough (render gid `993`). Source: [kasm-ubuntu-noble-desktop-battlemage](https://github.com/mamama1/kasm-ubuntu-noble-desktop-battlemage). |
+
+## Image updates (how new builds reach Kasm)
+
+Because each `workspace.json` sets `docker_registry`, Kasm agents **re-pull the image tag
+every hour** even when it's already cached ([Kasm: Image Maintenance](https://www.kasmweb.com/docs/latest/how_to/image_maintenance.html)).
+So the tag you reference decides the behaviour:
+
+- **Moving tag** (e.g. `:1.19.0`, the default here): new CI builds that overwrite the tag
+  roll out **automatically** to new sessions within the hour — no edits to this repo.
+- **Immutable tag** (e.g. `:1.19.0-20260709`): pins to one exact build. To change it you edit
+  `compatibility[].image` and commit; the workspace's folder hash changes and Kasm shows
+  **"update available"** on the installed workspace for you to apply.
+
+Editing this repo is therefore only needed to **pin/roll back**, to change `run_config`, or to
+add a workspace — not for routine image refreshes.
 
 ## Adding a new workspace
 
