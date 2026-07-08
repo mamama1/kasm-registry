@@ -56,11 +56,15 @@ add a workspace — not for routine image refreshes.
 
 ## Notes for maintainers
 
-- **`basePath` / URLs in `site/next.config.js` keep the literal `1.0` token on purpose.**
-  `build_all_branches.sh` rewrites `1.0` → the branch name (`1.1`) at build time. Only change
-  the repo-name segment (`kasm-registry`) if you rename the GitHub repo, and the
-  `mamama1` GitHub user if different. Set **`1.1` as the repo's default branch** so the site
+- **Only `basePath` keeps the literal `1.0` token** — `build_all_branches.sh` rewrites `1.0`
+  → the branch name (`1.1`) at build time for the site's HTML. But `processjson.js` generates
+  `list.json` *before* that rewrite, so `icon`/`listUrl` must be hardcoded (no `1.0` token) or
+  the wrong version leaks into `list.json`: `icon` uses the full `/1.1/` asset URL, and
+  `listUrl` is the version-less registry root. Change the repo-name segment (`kasm-registry`)
+  and `mamama1` user if yours differ. Set **`1.1` as the repo's default branch** so the site
   root redirects to `/1.1/`.
+- **The URL you paste into Kasm is the version-less root** (Kasm discovers versions via
+  `versions.txt`): `https://mamama1.github.io/kasm-registry/` — trailing slash, **no** `/1.1/`.
 - Generated files (`public/`, `site/public/list.json`, `site/public/icons/`) are build
   artifacts and are git-ignored — the CI produces them.
 - Pull upstream template/schema updates later with:
